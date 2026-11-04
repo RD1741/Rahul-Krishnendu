@@ -103,7 +103,7 @@ function Rsvp({ data }) {
   const r = data.rsvp;
   const eventNames = data.events.map((e) => e.name);
   const [form, setForm] = useState({
-    name: "", phone: "", guests: "1", events: [], diet: "No Preference", message: "",
+    name: "", phone: "", guests: "1", events: [], message: "",
   });
   const [done, setDone] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -123,7 +123,7 @@ function Rsvp({ data }) {
     const body = {
       name: form.name, phone: form.phone, guests: form.guests,
       events: form.events.join(", ") || "Not specified",
-      dietary: form.diet, message: form.message,
+      message: form.message,
     };
     if (r.mode === "formspree" && r.formspreeUrl) {
       setBusy(true);
@@ -144,7 +144,7 @@ function Rsvp({ data }) {
       const text =
         `RSVP for ${data.couple.groom} & ${data.couple.bride}'s wedding\n` +
         `Name: ${body.name}\nPhone: ${body.phone}\nGuests: ${body.guests}\n` +
-        `Events: ${body.events}\nDietary: ${body.dietary}\nMessage: ${body.message}`;
+        `Events: ${body.events}\nMessage: ${body.message}`;
       window.open(`https://wa.me/${r.whatsappNumber}?text=${encodeURIComponent(text)}`, "_blank");
       setDone(true);
     }
@@ -184,11 +184,6 @@ function Rsvp({ data }) {
               ))}
             </div>
           </fieldset>
-          <label>Dietary preference
-            <select value={form.diet} onChange={set("diet")}>
-              {["No Preference", "Vegetarian", "Non-Vegetarian", "Vegan", "Jain"].map((d) => <option key={d}>{d}</option>)}
-            </select>
-          </label>
           <label>Message for the couple
             <textarea rows="3" value={form.message} onChange={set("message")} />
           </label>
@@ -224,6 +219,8 @@ function Music({ file }) {
 export default function App() {
   const [data, setData] = useState(null);
   const [error, setError] = useState(false);
+  const [opened, setOpened] = useState(false);
+  const [opening, setOpening] = useState(false);
 
   useEffect(() => {
     fetch(`/invitation.json?v=${Date.now()}`)
@@ -246,9 +243,33 @@ export default function App() {
 
   const { couple: c, hero, wedding, events, venue, live, video } = data;
   const names = `${c.groom} & ${c.bride}`;
+  const openInvitation = () => {
+    setOpening(true);
+    window.setTimeout(() => setOpened(true), 700);
+  };
 
   return (
     <main>
+      {!opened && (
+        <section className={`invitation-cover${opening ? " is-opening" : ""}`} aria-label="Wedding invitation cover">
+          <div className="cover-frame">
+            <p className="cover-kicker">Together with their families</p>
+            <span className="cover-flourish" aria-hidden="true">❧</span>
+            <p className="cover-monogram" aria-hidden="true">{c.groom[0]} <i>&amp;</i> {c.bride[0]}</p>
+            <p className="cover-label">Wedding Invitation</p>
+            <h1 className="cover-names"><span>{c.groom}</span><i>&amp;</i><span>{c.bride}</span></h1>
+            <p className="cover-request">Request the pleasure of your company</p>
+            <p className="cover-date">{wedding.displayDate}</p>
+            <button className="seal-button" onClick={openInvitation} aria-label="Open wedding invitation">
+              <span className="seal-icon" aria-hidden="true">✦</span>
+              <span>Open Invitation</span>
+            </button>
+            <p className="cover-hint">Tap the seal to begin</p>
+          </div>
+        </section>
+      )}
+
+      {opened && <div className="invitation-content">
       {data.music?.enabled && <Music file={data.music.file} />}
 
       {/* HERO */}
@@ -367,6 +388,7 @@ export default function App() {
         <p>{wedding.displayDate}</p>
         <p className="note">{data.footer.text}</p>
       </footer>
+      </div>}
     </main>
   );
 }
