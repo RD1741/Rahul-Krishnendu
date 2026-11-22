@@ -76,11 +76,15 @@ function Gallery({ title, photos }) {
   const go = (direction) => {
     setCurrent((index) => (index + direction + photos.length) % photos.length);
   };
+  const slideOffset = (index) => {
+    const midpoint = Math.floor(photos.length / 2);
+    return ((index - current + photos.length + midpoint) % photos.length) - midpoint;
+  };
   useEffect(() => {
-    if (!photos?.length) return undefined;
+    if (!photos?.length || open !== null) return undefined;
     const timer = window.setInterval(() => go(1), 5000);
     return () => window.clearInterval(timer);
-  }, [photos]);
+  }, [photos, open]);
   useEffect(() => {
     const onKey = (e) => {
       if (e.key === "Escape") setOpen(null);
@@ -95,13 +99,29 @@ function Gallery({ title, photos }) {
     <section className="section">
       <h2 className="h2">{title}</h2>
       <div className="gallery" aria-roledescription="carousel" aria-label={title}>
-        <div className="gallery-track" style={{ transform: `translateX(-${current * 100}%)` }}>
-          {photos.map((src, i) => (
-            <button key={src + i} className="g-item" onClick={() => setOpen(i)} aria-label={`Open photo ${i + 1}`}>
-              <img src={src} alt={`Gallery photo ${i + 1}`} loading={i === 0 ? "eager" : "lazy"} />
-            </button>
-          ))}
-        </div>
+      {photos.map((src, i) => {
+        const offset = slideOffset(i);
+        const distance = Math.abs(offset);
+        return (
+          <button
+            key={src + i}
+            className="g-item"
+            onClick={() => (offset === 0 ? setOpen(i) : setCurrent(i))}
+            aria-label={offset === 0 ? `Open photo ${i + 1}` : `Show photo ${i + 1}`}
+            aria-current={offset === 0 ? "true" : undefined}
+            aria-hidden={distance > 2}
+            tabIndex={distance > 2 ? -1 : 0}
+            style={{
+              transform: `translateX(calc(-50% + ${offset * 68}%)) rotateY(${offset * -22}deg) scale(${1 - Math.min(distance, 3) * 0.12}) translateZ(${-distance * 35}px)`,
+              zIndex: photos.length - distance,
+              opacity: distance > 2 ? 0 : 1 - distance * 0.18,
+              pointerEvents: distance > 2 ? "none" : "auto",
+            }}
+          >
+            <img src={src} alt={`Gallery photo ${i + 1}`} loading={distance < 2 ? "eager" : "lazy"} />
+          </button>
+        );
+      })}
         {photos.length > 1 && (
           <>
             <button className="g-nav g-prev" onClick={() => go(-1)} aria-label="Previous photo">‹</button>
@@ -449,14 +469,13 @@ export default function App() {
         <p className="shloka">{data.invitationText.shloka}</p>
         <p className="lead wide">{data.invitationText.message}</p>
         <div className="couple">
+          <img className="couple-photo" src={c.couplePhoto} alt={`${c.groom} and ${c.bride}`} />
           <div className="person">
-            {c.groomPhoto ? <img src={c.groomPhoto} alt={c.groom} /> : <div className="ph">{c.groom[0]}</div>}
             <h2>{c.groom}</h2>
             <p>Son of<br />{c.groomParents}</p>
           </div>
           <span className="amp">&amp;</span>
           <div className="person">
-            {c.bridePhoto ? <img src={c.bridePhoto} alt={c.bride} /> : <div className="ph">{c.bride[0]}</div>}
             <h2>{c.bride}</h2>
             <p>Daughter of<br />{c.brideParents}</p>
           </div>
