@@ -69,9 +69,16 @@ a { color: var(--rose); }
 .ev-date { font-size: .9rem; color: var(--rose); font-weight: 500; }
 .ev-time { font-weight: 500; }
 
-.gallery { columns: 2 160px; column-gap: .75rem; }
-.g-item { display: block; width: 100%; padding: 0; border: 0; background: none; margin-bottom: .75rem; cursor: zoom-in; border-radius: 8px; overflow: hidden; }
-.g-item img { width: 100%; }
+.gallery { position: relative; max-width: 720px; margin: 0 auto; overflow: hidden; border-radius: 12px; background: #e9ede4; }
+.gallery-track { display: flex; transition: transform .65s cubic-bezier(.22,.61,.36,1); }
+.g-item { flex: 0 0 100%; display: grid; place-items: center; width: 100%; height: min(72vh, 620px); padding: 0; border: 0; background: #e9ede4; cursor: zoom-in; overflow: hidden; }
+.g-item img { width: 100%; height: 100%; object-fit: cover; }
+.g-nav { position: absolute; top: 50%; width: 44px; height: 44px; margin-top: -22px; border: 1px solid rgba(255,255,255,.7); border-radius: 50%; background: rgba(20,20,20,.48); color: #fff; font-family: Georgia, serif; font-size: 2.2rem; line-height: 36px; cursor: pointer; z-index: 2; }
+.g-prev { left: 12px; }
+.g-next { right: 12px; }
+.g-dots { position: absolute; left: 50%; bottom: 12px; display: flex; gap: 7px; transform: translateX(-50%); z-index: 2; }
+.g-dot { width: 8px; height: 8px; padding: 0; border: 1px solid #fff; border-radius: 50%; background: rgba(20,20,20,.38); cursor: pointer; box-shadow: 0 1px 4px rgba(0,0,0,.25); }
+.g-dot.active { background: #fff; }
 .lightbox { position: fixed; inset: 0; background: rgba(10,8,25,.92); display: grid; place-items: center; z-index: 50; padding: 1rem; }
 .lightbox img { max-height: 90vh; border-radius: 6px; }
 .lb-close { position: absolute; top: 1rem; right: 1.25rem; background: none; border: 0; color: #fff; font-size: 2.5rem; cursor: pointer; }
@@ -99,6 +106,7 @@ fieldset { border: 0; padding: 0; margin: 0; }
 .foot-names { font-family: var(--serif); font-size: 1.8rem; color: var(--marigold); }
 
 .music { position: fixed; right: 1rem; bottom: 1rem; z-index: 40; width: 46px; height: 46px; border-radius: 50%; border: 1px solid var(--marigold); background: var(--ink); color: var(--marigold); font-size: 1.1rem; cursor: pointer; }
+.youtube-music-player { position: fixed; width: 1px; height: 1px; left: -10px; bottom: -10px; pointer-events: none; }
 
 @media (max-width: 520px) {
   .couple { grid-template-columns: 1fr; }
@@ -220,10 +228,9 @@ body {
 .ev-time { color: var(--ink) !important; font-weight: 500; }
 .events a { display: inline-block; margin-top: .5rem; font-size: .9rem; text-decoration-color: rgba(120,139,114,.45); text-underline-offset: 4px; }
 
-.gallery { columns: 2 220px; column-gap: 1rem; }
-.g-item { margin-bottom: 1rem; border-radius: 4px; background: #e9ede4; }
+.gallery { border: 1px solid rgba(120,139,114,.4); border-radius: 4px; box-shadow: 0 15px 40px rgba(53,71,61,.08); }
 .g-item img { transition: transform .45s ease; }
-.g-item:hover img { transform: scale(1.035); }
+.g-item:hover img { transform: scale(1.025); }
 .video, .map { border: 1px solid rgba(120, 139, 114, .4); border-radius: 4px; box-shadow: 0 15px 40px rgba(53,71,61,.08); }
 .venue-name { color: var(--ink); font-size: 2.2rem; }
 

@@ -27,13 +27,22 @@
     "message": "With the blessings of the Almighty and our beloved families, we joyfully invite you to celebrate the sacred union of our children in holy matrimony."
   },
   "events": [
-    { "name": "Sangeet", "date": "2026-12-04", "time": "7:00 PM onwards", "venue": "Brides Home, Konathukunnu", "mapQuery": "Konathukunnu" },
+    { "name": "Sangeeth", "date": "2026-12-04", "time": "7:00 PM onwards", "venue": "Brides Home, Konathukunnu", "mapQuery": "Konathukunnu" },
     { "name": "Thaalikettu", "date": "2026-12-06", "time": "8:00 AM to 9:00 AM", "venue": "Kodungallur Sree Kurumba Bagavathi Temple", "mapQuery": "Sree kurumba bhagavathy temple Kodungallur" },
     { "name": "Wedding Ceremony", "date": "2026-12-06", "time": "10:30 AM", "venue": "M D Convention Center, Konathukunnu, Irinjalakuda", "mapQuery": "M D Convention Center Konathukunnu Irinjalakuda" }
    ],
   "gallery": {
     "title": "Our Journey Together",
-    "photos": []
+    "photos": [
+      "/gallery/5680.jpg",
+      "/gallery/5676.jpg",
+      "/gallery/5677.jpg",
+      "/gallery/5636.jpg",
+      "/gallery/5637.jpg",
+      "/gallery/5642.jpg",
+      "/gallery/5639.jpg",
+      "/gallery/5644.jpg"
+    ]
   },
   "video": {
     "title": "A Special Glimpse",
@@ -46,7 +55,7 @@
     "mapQuery": "M D Convention Center Konathukunnu Irinjalakuda"
   },
   "live": {
-    "enabled": true,
+    "enabled": false,
     "title": "Can't Make It? Watch Live!",
     "text": "Join us virtually as we celebrate this beautiful moment",
     "url": "",
@@ -62,8 +71,11 @@
     "thankYou": "We look forward to celebrating with you. Your response has been recorded."
   },
   "music": {
-    "enabled": false,
-    "file": "/music.mp3"
+    "enabled": true,
+    "file": "/music.mp3",
+    "youtubeId": "2ih7BIIIpDE",
+    "startSeconds": 3,
+    "endSeconds": 60
   },
   "footer": {
     "text": "Made with love by Rahul & Krishnendu"

@@ -71,26 +71,58 @@ function calendarLinks(data) {
 
 /* ---------- Gallery ---------- */
 function Gallery({ title, photos }) {
+  const [current, setCurrent] = useState(0);
   const [open, setOpen] = useState(null);
+  const go = (direction) => {
+    setCurrent((index) => (index + direction + photos.length) % photos.length);
+  };
   useEffect(() => {
-    const onKey = (e) => e.key === "Escape" && setOpen(null);
+    if (!photos?.length) return undefined;
+    const timer = window.setInterval(() => go(1), 5000);
+    return () => window.clearInterval(timer);
+  }, [photos]);
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === "Escape") setOpen(null);
+      if (!open && e.key === "ArrowLeft") go(-1);
+      if (!open && e.key === "ArrowRight") go(1);
+    };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, []);
+  }, [open, photos]);
   if (!photos?.length) return null;
   return (
     <section className="section">
       <h2 className="h2">{title}</h2>
-      <div className="gallery">
-        {photos.map((src, i) => (
-          <button key={src + i} className="g-item" onClick={() => setOpen(src)} aria-label={`Open photo ${i + 1}`}>
-            <img src={src} alt="" loading="lazy" />
-          </button>
-        ))}
+      <div className="gallery" aria-roledescription="carousel" aria-label={title}>
+        <div className="gallery-track" style={{ transform: `translateX(-${current * 100}%)` }}>
+          {photos.map((src, i) => (
+            <button key={src + i} className="g-item" onClick={() => setOpen(i)} aria-label={`Open photo ${i + 1}`}>
+              <img src={src} alt={`Gallery photo ${i + 1}`} loading={i === 0 ? "eager" : "lazy"} />
+            </button>
+          ))}
+        </div>
+        {photos.length > 1 && (
+          <>
+            <button className="g-nav g-prev" onClick={() => go(-1)} aria-label="Previous photo">‹</button>
+            <button className="g-nav g-next" onClick={() => go(1)} aria-label="Next photo">›</button>
+            <div className="g-dots" aria-label="Choose photo">
+              {photos.map((src, i) => (
+                <button
+                  key={src}
+                  className={i === current ? "g-dot active" : "g-dot"}
+                  onClick={() => setCurrent(i)}
+                  aria-label={`Show photo ${i + 1}`}
+                  aria-current={i === current ? "true" : undefined}
+                />
+              ))}
+            </div>
+          </>
+        )}
       </div>
-      {open && (
+      {open !== null && (
         <div className="lightbox" onClick={() => setOpen(null)} role="dialog" aria-modal="true">
-          <img src={open} alt="" />
+          <img src={photos[open]} alt={`Gallery photo ${open + 1}`} />
           <button className="lb-close" aria-label="Close">×</button>
         </div>
       )}
@@ -196,18 +228,133 @@ function Rsvp({ data }) {
 }
 
 /* ---------- Music ---------- */
-function Music({ file }) {
+function Music({ file, youtubeId, startSeconds = 0, endSeconds }) {
   const ref = useRef(null);
+  const youtubeRef = useRef(null);
+  const youtubePlayer = useRef(null);
+  const pendingPlay = useRef(false);
+  const [youtubeReady, setYoutubeReady] = useState(false);
   const [on, setOn] = useState(false);
+
+  useEffect(() => {
+    if (!youtubeId) return undefined;
+
+    const createPlayer = () => {
+      if (!window.YT?.Player || !youtubeRef.current) return;
+      youtubePlayer.current = new window.YT.Player(youtubeRef.current, {
+        height: "1",
+        width: "1",
+        videoId: youtubeId,
+        playerVars: {
+          start: startSeconds,
+          end: endSeconds,
+          loop: endSeconds == null ? 1 : 0,
+          playlist: endSeconds == null ? youtubeId : undefined,
+          playsinline: 1,
+          rel: 0,
+        },
+        events: {
+          onReady: (event) => {
+            setYoutubeReady(true);
+            if (pendingPlay.current) {
+              pendingPlay.current = false;
+              event.target.seekTo(startSeconds, true);
+              event.target.playVideo();
+              setOn(true);
+            }
+          },
+          onStateChange: (event) => {
+            if (event.data === window.YT.PlayerState.PLAYING) setOn(true);
+            if (event.data === window.YT.PlayerState.PAUSED) setOn(false);
+          },
+        },
+      });
+    };
+
+    if (window.YT?.Player) {
+      createPlayer();
+    } else {
+      const previousReady = window.onYouTubeIframeAPIReady;
+      window.onYouTubeIframeAPIReady = () => {
+        previousReady?.();
+        createPlayer();
+      };
+      if (!document.getElementById("youtube-iframe-api")) {
+        const script = document.createElement("script");
+        script.id = "youtube-iframe-api";
+        script.src = "https://www.youtube.com/iframe_api";
+        document.head.appendChild(script);
+      }
+    }
+
+    return () => {
+      youtubePlayer.current?.destroy();
+      youtubePlayer.current = null;
+    };
+  }, [youtubeId, startSeconds, endSeconds]);
+
   const toggle = () => {
+    if (youtubeId) {
+      const player = youtubePlayer.current;
+      if (on) {
+        player?.pauseVideo();
+        setOn(false);
+      } else if (youtubeReady && player) {
+        player.seekTo(startSeconds, true);
+        player.playVideo();
+        setOn(true);
+      } else {
+        pendingPlay.current = true;
+      }
+      return;
+    }
+
     const a = ref.current;
     if (!a) return;
-    if (on) a.pause(); else a.play().catch(() => {});
-    setOn(!on);
+    if (on) {
+      a.pause();
+      setOn(false);
+      return;
+    }
+    if (a.readyState < 1) {
+      pendingPlay.current = true;
+      a.load();
+      return;
+    }
+    a.currentTime = startSeconds;
+    a.play().then(() => setOn(true)).catch(() => setOn(false));
+  };
+  const startPendingPlayback = (a) => {
+    if (!pendingPlay.current) return;
+    pendingPlay.current = false;
+    a.currentTime = startSeconds;
+    a.play().then(() => setOn(true)).catch(() => setOn(false));
+  };
+  const keepPlaybackInRange = (a) => {
+    if (endSeconds != null && a.currentTime >= endSeconds) a.currentTime = startSeconds;
   };
   return (
     <>
-      <audio ref={ref} src={file} loop preload="none" />
+      {youtubeId ? (
+        <div ref={youtubeRef} className="youtube-music-player" aria-hidden="true" />
+      ) : (
+        <audio
+          ref={ref}
+          src={file}
+          loop={endSeconds == null}
+          preload="metadata"
+          onLoadedMetadata={(event) => startPendingPlayback(event.currentTarget)}
+          onTimeUpdate={(event) => keepPlaybackInRange(event.currentTarget)}
+          onEnded={(event) => {
+            if (endSeconds != null && on) {
+              event.currentTarget.currentTime = startSeconds;
+              event.currentTarget.play().catch(() => setOn(false));
+            } else {
+              setOn(false);
+            }
+          }}
+        />
+      )}
       <button className="music" onClick={toggle} aria-label={on ? "Pause music" : "Play music"}>
         {on ? "❚❚" : "♪"}
       </button>
@@ -270,7 +417,14 @@ export default function App() {
       )}
 
       {opened && <div className="invitation-content">
-      {data.music?.enabled && <Music file={data.music.file} />}
+      {data.music?.enabled && (
+        <Music
+          file={data.music.file}
+          youtubeId={data.music.youtubeId}
+          startSeconds={data.music.startSeconds}
+          endSeconds={data.music.endSeconds}
+        />
+      )}
 
       {/* HERO */}
       <header className="hero">
