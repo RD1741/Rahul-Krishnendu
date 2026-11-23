@@ -46,7 +46,7 @@ a { color: var(--rose); }
 .person img, .ph { width: min(180px, 38vw); aspect-ratio: 3/4; object-fit: cover; margin: 0 auto 1rem; border-radius: 90px 90px 8px 8px; border: 2px solid var(--marigold); }
 .ph { display: grid; place-items: center; font-family: var(--serif); font-size: 4rem; color: var(--marigold); background: var(--ink); }
 .couple-photo { grid-column: 1 / -1; width: min(440px, 88vw); height: min(62vw, 460px); min-height: 260px; object-fit: cover; object-position: center 42%; margin: 0 auto 1rem; border: 1px solid var(--marigold); padding: 5px; background: #fffdf8; border-radius: 130px 130px 6px 6px; }
-.person h2 { font-family: var(--serif); font-weight: 500; font-size: 2rem; margin: 0; }
+.person h2 { font-family: "Allura", cursive; font-weight: 400; font-size: 2.6rem; margin: 0; }
 .person p { font-size: .95rem; margin: .25rem 0 0; }
 .amp { font-family: var(--serif); font-size: 2.5rem; color: var(--marigold); }
 
@@ -111,7 +111,7 @@ fieldset { border: 0; padding: 0; margin: 0; }
 
 @media (max-width: 520px) {
   .couple { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: .5rem; }
-  .person h2 { font-size: clamp(1.35rem, 5vw, 2rem); }
+  .person h2 { font-size: clamp(1.8rem, 8vw, 2.3rem); }
   .person p { font-size: .82rem; }
   .arch { padding-top: 3.5rem; }
   .gallery { height: min(68svh, 560px); min-height: 320px; }
@@ -215,7 +215,7 @@ body {
 }
 .couple-photo { width: min(440px, 88vw); height: min(62vw, 460px); min-height: 260px; }
 .ph { color: var(--rose); background: #e9ede4; }
-.person h2 { color: var(--ink); font-size: 2.3rem; }
+.person h2 { color: var(--ink); font-size: 2.8rem; }
 .person p { color: #74786f; line-height: 1.8; }
 .amp { color: var(--marigold); font-size: 3rem; }
 
@@ -434,6 +434,7 @@ body { background: var(--ivory); }
   .cover-frame { min-height: calc(100svh - 2rem); padding: 2.5rem 1rem; }
   .cover-request { max-width: 18rem; font-size: 1.05rem; line-height: 1.4; }
   .names span { font-size: clamp(3.75rem, 16vw, 5.2rem); }
+  .person h2 { font-size: clamp(1.8rem, 8vw, 2.3rem); }
 }
 
 @media (max-height: 760px) {

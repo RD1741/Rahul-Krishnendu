@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 
 const fmtDate = (iso) =>
   new Date(iso + "T00:00:00").toLocaleDateString("en-IN", {
@@ -248,7 +248,10 @@ function Rsvp({ data }) {
 }
 
 /* ---------- Music ---------- */
-function Music({ file, youtubeId, startSeconds = 0, endSeconds }) {
+const Music = forwardRef(function Music(
+  { file, youtubeId, startSeconds = 0, endSeconds, visible = true },
+  controlRef,
+) {
   const ref = useRef(null);
   const youtubeRef = useRef(null);
   const youtubePlayer = useRef(null);
@@ -313,13 +316,10 @@ function Music({ file, youtubeId, startSeconds = 0, endSeconds }) {
     };
   }, [youtubeId, startSeconds, endSeconds]);
 
-  const toggle = () => {
+  const play = () => {
     if (youtubeId) {
       const player = youtubePlayer.current;
-      if (on) {
-        player?.pauseVideo();
-        setOn(false);
-      } else if (youtubeReady && player) {
+      if (youtubeReady && player) {
         player.seekTo(startSeconds, true);
         player.playVideo();
         setOn(true);
@@ -331,18 +331,19 @@ function Music({ file, youtubeId, startSeconds = 0, endSeconds }) {
 
     const a = ref.current;
     if (!a) return;
+    if (a.readyState < 1) pendingPlay.current = true;
+    else a.currentTime = startSeconds;
+    a.play().then(() => setOn(true)).catch(() => setOn(false));
+  };
+  useImperativeHandle(controlRef, () => ({ play }), [youtubeId, youtubeReady, startSeconds]);
+  const toggle = () => {
     if (on) {
-      a.pause();
+      if (youtubeId) youtubePlayer.current?.pauseVideo();
+      else ref.current?.pause();
       setOn(false);
       return;
     }
-    if (a.readyState < 1) {
-      pendingPlay.current = true;
-      a.load();
-      return;
-    }
-    a.currentTime = startSeconds;
-    a.play().then(() => setOn(true)).catch(() => setOn(false));
+    play();
   };
   const startPendingPlayback = (a) => {
     if (!pendingPlay.current) return;
@@ -375,12 +376,14 @@ function Music({ file, youtubeId, startSeconds = 0, endSeconds }) {
           }}
         />
       )}
-      <button className="music" onClick={toggle} aria-label={on ? "Pause music" : "Play music"}>
-        {on ? "❚❚" : "♪"}
-      </button>
+      {visible && (
+        <button className="music" onClick={toggle} aria-label={on ? "Pause music" : "Play music"}>
+          {on ? "❚❚" : "♪"}
+        </button>
+      )}
     </>
   );
-}
+});
 
 /* ---------- App ---------- */
 export default function App() {
@@ -388,6 +391,7 @@ export default function App() {
   const [error, setError] = useState(false);
   const [opened, setOpened] = useState(false);
   const [opening, setOpening] = useState(false);
+  const musicControl = useRef(null);
 
   useEffect(() => {
     fetch(`/invitation.json?v=${Date.now()}`)
@@ -412,11 +416,22 @@ export default function App() {
   const names = `${c.groom} & ${c.bride}`;
   const openInvitation = () => {
     setOpening(true);
+    if (data.music?.enabled) musicControl.current?.play();
     window.setTimeout(() => setOpened(true), 700);
   };
 
   return (
     <main>
+      {data.music?.enabled && (
+        <Music
+          ref={musicControl}
+          file={data.music.file}
+          youtubeId={data.music.youtubeId}
+          startSeconds={data.music.startSeconds}
+          endSeconds={data.music.endSeconds}
+          visible={opened}
+        />
+      )}
       {!opened && (
         <section className={`invitation-cover${opening ? " is-opening" : ""}`} aria-label="Wedding invitation cover">
           <div className="cover-frame">
@@ -437,15 +452,6 @@ export default function App() {
       )}
 
       {opened && <div className="invitation-content">
-      {data.music?.enabled && (
-        <Music
-          file={data.music.file}
-          youtubeId={data.music.youtubeId}
-          startSeconds={data.music.startSeconds}
-          endSeconds={data.music.endSeconds}
-        />
-      )}
-
       {/* HERO */}
       <header className="hero">
         <div className="arch">
