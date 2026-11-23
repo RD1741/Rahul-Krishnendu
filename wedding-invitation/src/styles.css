@@ -343,7 +343,7 @@ body { background: var(--ivory); }
 .cover-monogram { margin: 0 0 .6rem; color: var(--marigold); font: 1rem var(--serif); letter-spacing: .16em; }
 .cover-monogram i { padding: 0 .25rem; font-style: normal; }
 .cover-label { color: #8b7b6a; font-size: .68rem; font-weight: 500; letter-spacing: .3em; text-transform: uppercase; }
-.cover-names { display: flex; flex-direction: column; align-items: center; margin: .55rem 0 1.4rem; color: var(--ink); font: 400 clamp(4.5rem, 12vw, 6.7rem)/.86 "Great Vibes", cursive; }
+.cover-names { display: flex; flex-direction: column; align-items: center; margin: .55rem 0 1.4rem; color: var(--ink); font: 400 clamp(4.5rem, 12vw, 6.7rem)/.86 "Allura", cursive; }
 .cover-names i { margin: .2rem 0; color: var(--marigold); font: 400 1.35rem var(--serif); }
 .cover-request { color: #71635b; font: italic 1.25rem var(--serif); letter-spacing: .1em; text-transform: uppercase; }
 .cover-date { margin-top: 1.2rem; color: var(--ink); font-size: .76rem; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; }
@@ -402,7 +402,7 @@ body { background: var(--ivory); }
 .kicker, .tagline { color: #856856; }
 .blessing, .names i { color: var(--marigold); }
 .names { letter-spacing: 0; line-height: .96; }
-.names span { font: 400 clamp(4rem, 11vw, 6rem)/.9 "Great Vibes", cursive; }
+.names span { font: 400 clamp(4rem, 11vw, 6rem)/.9 "Allura", cursive; }
 .names i { font: 400 .38em var(--serif); }
 .date { color: var(--ink); }
 .loc { color: #766b64; }

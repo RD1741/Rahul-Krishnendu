@@ -6,7 +6,7 @@
   "couple": {
     "groom": "Rahul Dev",
     "bride": "Krishnendu",
-    "couplePhoto": "/gallery/5676.jpg",
+    "couplePhoto": "/gallery/5714.jpg",
     "groomPhoto": "",
     "bridePhoto": "",
     "groomParents": "Mr. Ravi & Mrs. Raji Ravi",
@@ -14,8 +14,7 @@
   },
   "hero": {
     "kicker": "You are cordially invited",
-    "greeting": "Dear Esteemed Guest,",
-    "tagline": "A Sacred Union of Two Souls",
+    "greeting": "With Love to Our Cherished Guests,",
     "blessing": "|| Shubh Vivah ||",
     "location": "Irinjalakuda, India"
   },
@@ -24,8 +23,8 @@
     "displayDate": "Sunday, 6th December 2026"
   },
   "invitationText": {
-    "shloka": "|| श्री गणेशाय नमः ||",
-    "message": "With the blessings of the Almighty and our beloved families, we joyfully invite you to celebrate the sacred union of our children in holy matrimony."
+    "shloka": "|| With Love, We Begin Forever ||",
+    "message": "From two individual journeys to one beautiful destination, our love has brought us together. We joyfully invite you to be part of the beginning of our forever."
   },
   "events": [
     { "name": "Sangeeth", "date": "2026-12-04", "time": "7:00 PM onwards", "venue": "Brides Home, Konathukunnu", "mapQuery": "Konathukunnu" },
@@ -35,14 +34,13 @@
   "gallery": {
     "title": "Our Journey Together",
     "photos": [
-      "/gallery/5680.jpg",
-      "/gallery/5676.jpg",
-      "/gallery/5677.jpg",
-      "/gallery/5636.jpg",
-      "/gallery/5637.jpg",
-      "/gallery/5642.jpg",
-      "/gallery/5639.jpg",
-      "/gallery/5644.jpg"
+      "/gallery/5706.jpg",
+      "/gallery/5708.jpg",
+      "/gallery/5710.jpg",
+      "/gallery/5713.jpg",
+      "/gallery/5720.jpg",
+      "/gallery/5714.jpg",
+      "/gallery/5716.jpg"
     ]
   },
   "video": {
@@ -74,9 +72,8 @@
   "music": {
     "enabled": true,
     "file": "/music.mp3",
-    "youtubeId": "2ih7BIIIpDE",
-    "startSeconds": 3,
-    "endSeconds": 60
+    "youtubeId": "",
+    "startSeconds": 0
   },
   "footer": {
     "text": "Made with love by Rahul & Krishnendu"
